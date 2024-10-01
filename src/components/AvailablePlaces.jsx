@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo, useMemo } from "react";
 import Places from "./Places.jsx";
 
 const URL = "http://localhost:3000";
