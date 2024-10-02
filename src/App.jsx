@@ -64,13 +64,31 @@ function App() {
     }
   }, []);
 
-  const handleRemovePlace = useCallback(async function handleRemovePlace() {
-    setUserPlaces((prevPickedPlaces) =>
-      prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
-    );
+  const handleRemovePlace = useCallback(
+    async function handleRemovePlace() {
+      setUserPlaces((prevPickedPlaces) =>
+        prevPickedPlaces.filter(
+          (place) => place.id !== selectedPlace.current.id
+        )
+      );
 
-    setModalIsOpen(false);
-  }, []);
+      try {
+        const updatedPlaces = userPlaces.filter(
+          (place) => place.id !== selectedPlace.current.id
+        );
+        const resDelete = await addUserPlaces(updatedPlaces);
+        setSuccessMsg(resDelete);
+      } catch (error) {
+        setUserPlaces(userPlaces);
+        setErrorAddMsg({
+          message: error.message || "Failed to delete places. Try Again Later!",
+        });
+      }
+
+      setModalIsOpen(false);
+    },
+    [userPlaces]
+  );
 
   const handleError = () => {
     setErrorAddMsg(null);
