@@ -9,14 +9,17 @@ export default async function fetchAvailablePlaces() {
   return resData.places;
 }
 
-export async function updateUserPlaces(places) {
+export async function addUserPlaces(places) {
   const response = await fetch(`${URL}/user-places`, {
     method: "PUT",
-    body: JSON.stringify(places),
+    body: JSON.stringify({ places }),
     headers: {
       "Content-type": "application/json",
     },
   });
-  const resData = await response.json()
+  if (!response.ok) {
+    throw new Error("Failed to add places...");
+  }
+  const resData = await response.json();
   return resData.message;
 }
