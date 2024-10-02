@@ -8,3 +8,15 @@ export default async function fetchAvailablePlaces() {
 
   return resData.places;
 }
+
+export async function updateUserPlaces(places) {
+  const response = await fetch(`${URL}/user-places`, {
+    method: "PUT",
+    body: JSON.stringify(places),
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+  const resData = await response.json()
+  return resData.message;
+}
