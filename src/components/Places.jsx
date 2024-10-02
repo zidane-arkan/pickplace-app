@@ -3,12 +3,11 @@ import { memo } from "react";
 const Places = memo(
   ({ title, places, fallbackText, isLoading, loadingText, onSelectPlace }) => {
     console.log(places);
-    return isLoading ? (
-      <p className="fallback-text">{loadingText}</p>
-    ) : (
+    return (
       <section className="places-category">
         <h2>{title}</h2>
-        {places.length === 0 && <p className="fallback-text">{fallbackText}</p>}
+        {isLoading && (<p className="fallback-text">{loadingText}</p>)}
+        {(!isLoading && places.length) === 0 && <p className="fallback-text">{fallbackText}</p>}
         {places.length > 0 && (
           <ul className="places">
             {places.map((place) => (

@@ -6,7 +6,7 @@ import ErrorMessage from "./components/Error.jsx";
 import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
 import logoImg from "./assets/logo.png";
 import AvailablePlaces from "./components/AvailablePlaces.jsx";
-import { addUserPlaces } from "./http.js";
+import { addUserPlaces, fetchUserPlaces } from "./http.js";
 
 function App() {
   const selectedPlace = useRef();
@@ -14,6 +14,7 @@ function App() {
   const [userPlaces, setUserPlaces] = useState([]);
   const [errorAddMsg, setErrorAddMsg] = useState();
   const [successMsg, setSuccessMsg] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -30,6 +31,23 @@ function App() {
   //   };
   //   addDataPlaces();
   // }, [userPlaces]);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setIsLoading(true);
+      try {
+        const resData = await fetchUserPlaces();
+        setUserPlaces(resData);
+      } catch (error) {
+        setUserPlaces([]);
+        setErrorAddMsg({
+          message: error.message || "Error fetching user places...",
+        });
+        setIsLoading(false);
+      }
+      setIsLoading(false);
+    };
+    fetchUserData();
+  }, []);
 
   console.log(successMsg || errorAddMsg);
 
@@ -62,7 +80,7 @@ function App() {
         message: error.message || "Failed to add places. Try Again Later!",
       });
     }
-  }, []);
+  }, [userPlaces]);
 
   const handleRemovePlace = useCallback(
     async function handleRemovePlace() {
@@ -124,6 +142,8 @@ function App() {
         <Places
           title="I'd like to visit ..."
           fallbackText="Select the places you would like to visit below."
+          isLoading={isLoading}
+          loadingText={"Fetching User Places. Please Wait!"}
           places={userPlaces}
           onSelectPlace={handleStartRemovePlace}
         />
