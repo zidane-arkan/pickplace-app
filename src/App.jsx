@@ -2,6 +2,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 
 import Places from "./components/Places.jsx";
 import Modal from "./components/Modal.jsx";
+import ErrorMessage from "./components/Error.jsx";
 import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
 import logoImg from "./assets/logo.png";
 import AvailablePlaces from "./components/AvailablePlaces.jsx";
@@ -11,7 +12,7 @@ function App() {
   const selectedPlace = useRef();
 
   const [userPlaces, setUserPlaces] = useState([]);
-  const [errorMsg, setErrorMsg] = useState();
+  const [errorAddMsg, setErrorAddMsg] = useState();
   const [successMsg, setSuccessMsg] = useState();
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -22,7 +23,7 @@ function App() {
   //       const resAdd = await addUserPlaces(userPlaces);
   //       setSuccessMsg(resAdd);
   //     } catch (error) {
-  //       setErrorMsg({
+  //       setErrorAddMsg({
   //         message: error.message || "Failed to fetch places. Try Again Later!",
   //       });
   //     }
@@ -30,7 +31,7 @@ function App() {
   //   addDataPlaces();
   // }, [userPlaces]);
 
-  console.log(successMsg || errorMsg);
+  console.log(successMsg || errorAddMsg);
 
   const handleStartRemovePlace = useCallback((place) => {
     setModalIsOpen(true);
@@ -56,8 +57,9 @@ function App() {
       const resAdd = await addUserPlaces([selectedPlace, ...userPlaces]);
       setSuccessMsg(resAdd);
     } catch (error) {
-      setErrorMsg({
-        message: error.message || "Failed to fetch places. Try Again Later!",
+      setUserPlaces(userPlaces);
+      setErrorAddMsg({
+        message: error.message || "Failed to add places. Try Again Later!",
       });
     }
   }, []);
@@ -70,8 +72,21 @@ function App() {
     setModalIsOpen(false);
   }, []);
 
+  const handleError = () => {
+    setErrorAddMsg(null);
+  };
+
   return (
     <>
+      <Modal open={errorAddMsg} onClose={handleError}>
+        {errorAddMsg && (
+          <ErrorMessage
+            title={"An Error Occured"}
+            message={errorAddMsg.message}
+            onConfirm={handleError}
+          />
+        )}
+      </Modal>
       <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
         <DeleteConfirmation
           onCancel={handleStopRemovePlace}
