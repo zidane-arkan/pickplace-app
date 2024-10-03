@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+import React from "react";
 export default function Error({ title, message, onConfirm }) {
   return (
     <div className="error">

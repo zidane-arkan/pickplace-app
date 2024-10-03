@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import React from "react";
+import { useEffect } from "react";
 
-import ProgressBar from './ProgressBar.jsx';
+import ProgressBar from "./ProgressBar.jsx";
 
 const TIMER = 3000;
 

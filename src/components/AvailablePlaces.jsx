@@ -1,3 +1,5 @@
+import React from "react";
+import PropTypes from "prop-types";
 import { useState, useEffect, memo } from "react";
 import fetchAvailablePlaces from "../http.js";
 import Places from "./Places.jsx";
@@ -49,5 +51,10 @@ const AvailablePlaces = memo(({ onSelectPlace }) => {
     />
   );
 });
+
+AvailablePlaces.displayName = "AvailablePlaces";
+AvailablePlaces.propTypes = {
+  onSelectPlace: PropTypes.func.isRequired,
+};
 
 export default AvailablePlaces;

@@ -1,3 +1,4 @@
+import React from "react";
 import { useRef, useState, useCallback, useEffect } from "react";
 
 import Places from "./components/Places.jsx";
@@ -7,6 +8,7 @@ import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
 import logoImg from "./assets/logo.png";
 import AvailablePlaces from "./components/AvailablePlaces.jsx";
 import { addUserPlaces, fetchUserPlaces } from "./http.js";
+import useFetch from "./hooks/useFetch.js";
 
 function App() {
   const selectedPlace = useRef();
@@ -18,36 +20,39 @@ function App() {
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
+  useEffect(() => {
+    const addDataPlaces = async () => {
+      try {
+        const resAdd = await addUserPlaces(userPlaces);
+        setSuccessMsg(resAdd);
+      } catch (error) {
+        setErrorAddMsg({
+          message: error.message || "Failed to fetch places. Try Again Later!",
+        });
+      }
+    };
+    addDataPlaces();
+  }, [userPlaces]);
+
+  useFetch(fetchUserPlaces);
+
   // useEffect(() => {
-  //   const addDataPlaces = async () => {
+  //   const fetchUserData = async () => {
+  //     setIsLoading(true);
   //     try {
-  //       const resAdd = await addUserPlaces(userPlaces);
-  //       setSuccessMsg(resAdd);
+  //       const resData = await fetchUserPlaces();
+  //       setUserPlaces(resData);
+  //       setIsLoading(false);
   //     } catch (error) {
+  //       setUserPlaces([]);
   //       setErrorAddMsg({
-  //         message: error.message || "Failed to fetch places. Try Again Later!",
+  //         message: error.message || "Error fetching user places...",
   //       });
+  //       setIsLoading(false);
   //     }
   //   };
-  //   addDataPlaces();
-  // }, [userPlaces]);
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setIsLoading(true);
-      try {
-        const resData = await fetchUserPlaces();
-        setUserPlaces(resData);
-      } catch (error) {
-        setUserPlaces([]);
-        setErrorAddMsg({
-          message: error.message || "Error fetching user places...",
-        });
-        setIsLoading(false);
-      }
-      setIsLoading(false);
-    };
-    fetchUserData();
-  }, []);
+  //   fetchUserData();
+  // }, []);
 
   console.log(successMsg || errorAddMsg);
 
@@ -60,27 +65,30 @@ function App() {
     setModalIsOpen(false);
   }
 
-  const handleSelectPlace = useCallback(async (selectedPlace) => {
-    setUserPlaces((prevPickedPlaces) => {
-      if (!prevPickedPlaces) {
-        prevPickedPlaces = [];
-      }
-      if (prevPickedPlaces.some((place) => place.id === selectedPlace.id)) {
-        return prevPickedPlaces;
-      }
-      return [selectedPlace, ...prevPickedPlaces];
-    });
-
-    try {
-      const resAdd = await addUserPlaces([selectedPlace, ...userPlaces]);
-      setSuccessMsg(resAdd);
-    } catch (error) {
-      setUserPlaces(userPlaces);
-      setErrorAddMsg({
-        message: error.message || "Failed to add places. Try Again Later!",
+  const handleSelectPlace = useCallback(
+    async (selectedPlace) => {
+      setUserPlaces((prevPickedPlaces) => {
+        if (!prevPickedPlaces) {
+          prevPickedPlaces = [];
+        }
+        if (prevPickedPlaces.some((place) => place.id === selectedPlace.id)) {
+          return prevPickedPlaces;
+        }
+        return [selectedPlace, ...prevPickedPlaces];
       });
-    }
-  }, [userPlaces]);
+
+      try {
+        const resAdd = await addUserPlaces([selectedPlace, ...userPlaces]);
+        setSuccessMsg(resAdd);
+      } catch (error) {
+        setUserPlaces(userPlaces);
+        setErrorAddMsg({
+          message: error.message || "Failed to add places. Try Again Later!",
+        });
+      }
+    },
+    [userPlaces]
+  );
 
   const handleRemovePlace = useCallback(
     async function handleRemovePlace() {
