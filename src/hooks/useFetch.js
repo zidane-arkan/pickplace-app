@@ -7,7 +7,7 @@ export default function useFetch(fetchFn) {
   const [placesData, setDataPlaces] = useState([]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
         const resData = await fetchFn();
@@ -21,6 +21,8 @@ export default function useFetch(fetchFn) {
         setIsLoading(false);
       }
     };
-    fetchUserData();
+    fetchData();
   }, []);
+
+  return { isLoading, errorMsg, placesData };
 }

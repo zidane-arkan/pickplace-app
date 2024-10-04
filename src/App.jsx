@@ -15,26 +15,24 @@ function App() {
 
   const [userPlaces, setUserPlaces] = useState([]);
   const [errorAddMsg, setErrorAddMsg] = useState();
-  const [successMsg, setSuccessMsg] = useState();
-  const [isLoading, setIsLoading] = useState(false);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  useEffect(() => {
-    const addDataPlaces = async () => {
-      try {
-        const resAdd = await addUserPlaces(userPlaces);
-        setSuccessMsg(resAdd);
-      } catch (error) {
-        setErrorAddMsg({
-          message: error.message || "Failed to fetch places. Try Again Later!",
-        });
-      }
-    };
-    addDataPlaces();
-  }, [userPlaces]);
+  // useEffect(() => {
+  //   const addDataPlaces = async () => {
+  //     try {
+  //       const resAdd = await addUserPlaces(userPlaces);
+  //       setSuccessMsg(resAdd);
+  //     } catch (error) {
+  //       setErrorAddMsg({
+  //         message: error.message || "Failed to fetch places. Try Again Later!",
+  //       });
+  //     }
+  //   };
+  //   addDataPlaces();
+  // }, [userPlaces]);
 
-  useFetch(fetchUserPlaces);
+  // const [isLoading, errorMsg, placesData] =  useFetch(fetchUserPlaces);
 
   // useEffect(() => {
   //   const fetchUserData = async () => {
@@ -54,7 +52,7 @@ function App() {
   //   fetchUserData();
   // }, []);
 
-  console.log(successMsg || errorAddMsg);
+  const { isLoading, errorMsg, placesData } = useFetch(fetchUserPlaces);
 
   const handleStartRemovePlace = useCallback((place) => {
     setModalIsOpen(true);
@@ -78,8 +76,8 @@ function App() {
       });
 
       try {
-        const resAdd = await addUserPlaces([selectedPlace, ...userPlaces]);
-        setSuccessMsg(resAdd);
+        await addUserPlaces([selectedPlace, ...userPlaces]);
+        // setSuccessMsg(resAdd);
       } catch (error) {
         setUserPlaces(userPlaces);
         setErrorAddMsg({
@@ -102,8 +100,8 @@ function App() {
         const updatedPlaces = userPlaces.filter(
           (place) => place.id !== selectedPlace.current.id
         );
-        const resDelete = await addUserPlaces(updatedPlaces);
-        setSuccessMsg(resDelete);
+        await addUserPlaces(updatedPlaces);
+        // setSuccessMsg(resDelete);
       } catch (error) {
         setUserPlaces(userPlaces);
         setErrorAddMsg({
@@ -122,8 +120,8 @@ function App() {
 
   return (
     <>
-      <Modal open={errorAddMsg} onClose={handleError}>
-        {errorAddMsg && (
+      <Modal open={errorAddMsg || errorMsg} onClose={handleError}>
+        {(errorAddMsg || errorMsg) && (
           <ErrorMessage
             title={"An Error Occured"}
             message={errorAddMsg.message}
