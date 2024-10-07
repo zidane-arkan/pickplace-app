@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 // import React, { useState } from 'reactaeasdfas';
 
-export default function useFetch(fetchFn) {
+export default function useFetch(fetchFn, initialValue) {
   const [isLoading, setIsLoading] = useState();
   const [errorMsg, setErrorMsg] = useState();
-  const [placesData, setDataPlaces] = useState([]);
+  const [placesData, setDataPlaces] = useState(initialValue);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,5 +24,5 @@ export default function useFetch(fetchFn) {
     fetchData();
   }, []);
 
-  return { isLoading, errorMsg, placesData };
+  return { isLoading, errorMsg, placesData, setDataPlaces };
 }
